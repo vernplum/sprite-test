@@ -54,6 +54,7 @@ public class ObjectClickHandler : MonoBehaviour
     private static bool isAnyObjectInteracting = false; // Static flag to track if any object is currently being interacted with
     private static bool isAnyObjectRotating = false; // Static flag to track if any object is currently rotating
     private Vector3 lastMousePosition;
+    private Vector3 lastPosition; // Track the last position of the sprite
     private bool isDragging = false;
     private float clickStartTime;
     private const float clickThresholdTime = 0.2f; // Time threshold to distinguish between click and drag
@@ -72,6 +73,7 @@ public class ObjectClickHandler : MonoBehaviour
         isDragging = true;
         lastMousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         lastMousePosition.z = 0; // Ensure the z-position is maintained
+        lastPosition = transform.position; // Store the initial position
         clickStartTime = Time.time; // Record the time when the mouse button is pressed
     }
 
@@ -115,8 +117,9 @@ public class ObjectClickHandler : MonoBehaviour
             // Update the position
             transform.position = newPosition;
 
-            // Update the last mouse position
+            // Update the last mouse position and last position
             lastMousePosition = currentMousePosition;
+            lastPosition = newPosition;
         }
     }
 
