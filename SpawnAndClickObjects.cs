@@ -201,4 +201,10 @@ public class ObjectClickHandler : MonoBehaviour
         transform.position = endPosition;
         isAnyObjectInteracting = false; // Reset the static flag to indicate the interaction has finished
     }
+
+
+    private void test()
+    {
+        Debug.Log("Test");
+    }
 }
