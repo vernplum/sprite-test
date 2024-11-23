@@ -3,6 +3,7 @@ using System.Collections;
 
 public class SpawnAndClickObjects : MonoBehaviour
 {
+    
     public GameObject objectPrefab; // Prefab of the object to be spawned
     public GameObject dotPrefab; // Prefab for the dot
     public GameObject linePrefab; // Prefab for the line
@@ -47,6 +48,7 @@ public class SpawnAndClickObjects : MonoBehaviour
     }
 }
 
+
 public class ObjectClickHandler : MonoBehaviour
 {
     public int arrayIndex;
@@ -59,6 +61,14 @@ public class ObjectClickHandler : MonoBehaviour
     private float clickStartTime;
     private const float clickThresholdTime = 0.2f; // Time threshold to distinguish between click and drag
     private const float dragThresholdDistance = 0.1f; // Distance threshold to distinguish between click and drag
+    private const int left = 0;
+    private const int right = 1;
+    private int direction = left;
+    private int lastDirection = left + 10;
+    private string positionMessage = ""; // Variable to store the position message
+    private string lastPositionMessage = ""; // Variable to store the last position message
+    private int positionLorR = right; // Variable to store the position relative to the starting position
+    private int nextSpriteIndex = -1; // Variable to store the index of the next sprite
 
     void OnMouseDown()
     {
@@ -119,6 +129,67 @@ public class ObjectClickHandler : MonoBehaviour
 
             // Update the last mouse position and last position
             lastMousePosition = currentMousePosition;
+
+            if (transform.position.x < lastPosition.x)
+            {
+                direction = left;
+
+                if (direction != lastDirection)
+                {
+                    lastDirection = left;
+                    positionMessage = "Direction changed to left";
+                    if (positionMessage != lastPositionMessage)
+                    {
+                        Debug.Log(positionMessage);
+                        lastPositionMessage = positionMessage;
+                    }
+                }
+            }
+            else if (transform.position.x > lastPosition.x)
+            {
+                direction = right;
+
+                if (direction != lastDirection)
+                {
+                    lastDirection = right;
+                    positionMessage = "Direction changed to right";
+                    if (positionMessage != lastPositionMessage)
+                    {
+                        Debug.Log(positionMessage);
+                        lastPositionMessage = positionMessage;
+                    }
+                }
+            }
+
+            // Check if the sprite is left or right of its starting position
+            int newPositionLorR = transform.position.x < objectPositions[arrayIndex].x ? left : right;
+            if (newPositionLorR != positionLorR)
+            {
+                positionLorR = newPositionLorR;
+                Debug.Log("Position relative to starting position: " + (positionLorR == left ? "left" : "right"));
+            }
+
+            // Determine the next sprite index based on direction and positionLorR
+            int newNextSpriteIndex = -1;
+            if (direction == left && positionLorR == left && arrayIndex > 0)
+            {
+                newNextSpriteIndex = arrayIndex - 1;
+            }
+            else if (direction == right && positionLorR == right && arrayIndex < objectPositions.Length - 1)
+            {
+                newNextSpriteIndex = arrayIndex + 1;
+            }
+
+            // Print the next sprite index if it changes
+            if (newNextSpriteIndex != nextSpriteIndex)
+            {
+                nextSpriteIndex = newNextSpriteIndex;
+                if (nextSpriteIndex != -1)
+                {
+                    Debug.Log("Next sprite index: " + nextSpriteIndex);
+                }
+            }
+
             lastPosition = newPosition;
         }
     }
